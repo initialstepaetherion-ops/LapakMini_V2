@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tes Sistem V2</title>
+    <!-- Script Midtrans (Pastikan Client Key kamu benar) -->
+    <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="Mid-client-NJdNK-r3RlldIXH_"></script>
+    <style>
+        body { font-family: sans-serif; text-align: center; margin-top: 100px; background: #f4f6f9; }
+        button { padding: 15px 30px; font-size: 18px; background: #c21564; color: white; border: none; border-radius: 8px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Tes Sistem Checkout & Webhook</h1>
+    <p>Simulasi menjatuhkan 2 buah barang dari Slot 1</p>
+    <br>
+    <button id="btnBeli">Beli Sekarang (Rp 10.000)</button>
+
+    <script>
+        document.getElementById('btnBeli').onclick = async () => {
+            const btn = document.getElementById('btnBeli');
+            btn.innerText = "Memproses...";
+            btn.disabled = true;
+
+            try {
+                // 1. Tembak API Buat Transaksi di Node.js
+                const response = await fetch('/api/buat-transaksi', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        items: [
+                            { id_slot: 'slot_1', price: 5000, quantity: 2, name: 'Minuman' }
+                        ]
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if(data.success) {
+                    // 2. Munculkan Pop-up Midtrans
+                    window.snap.pay(data.token);
+                } else {
+                    alert("Gagal memanggil API: " + data.error);
+                }
+            } catch (error) {
+                alert("Server Node.js mati atau error!");
+            } finally {
+                btn.innerText = "Beli Sekarang (Rp 10.000)";
+                btn.disabled = false;
+            }
+        };
+    </script>
+</body>
+</html>
