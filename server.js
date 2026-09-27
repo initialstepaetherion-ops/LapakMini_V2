@@ -7,10 +7,12 @@ const { getDatabase } = require('firebase-admin/database');
 const midtransClient = require('midtrans-client'); 
 
 // 1. Inisialisasi Firebase Admin
-const serviceAccount = require('./firebase-key.json');
+const serviceAccount = process.env.FIREBASE_SERVICE_ACCOUNT_JSON
+  ? JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_JSON)
+  : require('./firebase-key.json');
 admin.initializeApp({
   credential: admin.cert(serviceAccount),
-  databaseURL: "https://vending-machine-a267f-default-rtdb.asia-southeast1.firebasedatabase.app"
+  databaseURL: process.env.FIREBASE_DATABASE_URL || "https://vending-machine-a267f-default-rtdb.asia-southeast1.firebasedatabase.app"
 });
 const db = getDatabase();
 
